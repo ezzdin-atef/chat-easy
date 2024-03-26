@@ -14,7 +14,7 @@ class ChatsController < ApplicationController
   end
 
   def getApplicationChats
-    @application = Application.find_by(token: chat_params[:token])
+    @application = Application.find_by(token: params[:token])
     return render json: { error: 'Application not found' } if @application.nil?
 
     @chats = Chat.where(application_id: @application.id)

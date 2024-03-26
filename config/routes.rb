@@ -16,5 +16,6 @@ Rails.application.routes.draw do
   post "messages" => "messages#create"
 
   get "applications/:token/chats" => "chats#getApplicationChats"
-  get "applications/:token/messages" => "messages#getChatMessages"
+  get "applications/:token/:chat_number/messages" => "messages#getChatMessages"
+  get "applications/:token/:chat_number/messages/search" => "messages#searchMessage"
 end

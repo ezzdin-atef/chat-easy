@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+    belongs_to :chat
     include Elasticsearch::Model
     include Elasticsearch::Model::Callbacks
 
@@ -13,5 +14,10 @@ class Message < ApplicationRecord
         self.as_json(only: [:content, :chat_id])
       end
 
-    belongs_to :chat
+      after_commit on: [:create, :update] do
+        __elasticsearch__.index_document
+      end
+
+
+      Message.__elasticsearch__.create_index!
 end
