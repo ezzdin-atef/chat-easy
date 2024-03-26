@@ -1,6 +1,9 @@
 class MessagesController < ApplicationController
   def create
-    @chat = Chat.find_by(chat_number: message_params[:chat_number], token: message_params[:token])
+    @application = Application.find_by(token: message_params[:token])
+    return render json: { error: 'Application not found' } if @application.nil?
+
+    @chat = Chat.find_by(chat_number: message_params[:chat_number], application_id: @application.id)
     return render json: { error: 'Chat not found' } if @chat.nil?
 
     @messages = Message.where(chat_id: @chat.id)

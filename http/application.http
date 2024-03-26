@@ -1,0 +1,11 @@
+GET http://127.0.0.1:3000/applications
+
+###
+
+POST http://127.0.0.1:3000/applications
+
+Content-Type: application/json
+
+{
+  "name": "My Application",
+}
