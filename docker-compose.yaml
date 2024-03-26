@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3301:3306"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6371:6379"
+    volumes:
+      - redis-data:/data
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails server -b 0.0.0.0"
+    environment:
+      - RAILS_ENV=development
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - .:/app
+      - app-storage:/app/storage
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+    ports:
+      - "3001:3000"
+
+volumes:
+  mysql-data: {}
+  app-storage: {}
+  es-data: {}
+  redis-data: {}
