@@ -9,12 +9,9 @@ class ApplicationsController < ApplicationController
         while Application.exists?(token: token)
             token = SecureRandom.hex(16)
         end
-        @application = Application.new(name: application_params[:name], token: token)
-        if @application.save
-            render json: {token: @application.token}
-        else
-            render json: {error: 'Error creating application'}
-        end
+        CreateApplicationJob.perform_async(application_params[:name], token)
+        
+        render json: { token: token }
     end
 
     def update
