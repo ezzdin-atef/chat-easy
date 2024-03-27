@@ -89,10 +89,10 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
 
-  config.elasticsearch = {
-    url: ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200/'),
-    transport_options: { request: { timeout: 5 } }
-  }
+    # config.elasticsearch = {
+    #   url: ENV['ELASTICSEARCH_URL'],
+    #   transport_options: { request: { timeout: 5 } }
+    # }
 
   config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] || 'redis://localhost:6379/1' }
 end

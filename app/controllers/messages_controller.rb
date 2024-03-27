@@ -6,9 +6,7 @@ class MessagesController < ApplicationController
     @chat = Chat.find_by(chat_number: params[:chat_number], application_id: @application.id)
     return render json: { error: 'Chat not found' } if @chat.nil?
 
-    @messages = Message.where(chat_id: @chat.id)
-
-    Message::CreateMessageJob(@chat.id, params[:content], @messages.length + 1)
+    Message::CreateMessageJob.perform_async(@chat.id, params[:content])
     render json: { message: 'Message created successfully' }
   end
 
@@ -21,8 +19,7 @@ class MessagesController < ApplicationController
 
     @messages = Message.where(chat_id: @chat.id)
     @messages = @messages.map do |message|
-      message.attributes.except('chat_id')
-      message.attributes.except('id')
+      message.attributes.except('chat_id', 'id')
     end
     render json: @messages
   end
@@ -36,8 +33,7 @@ class MessagesController < ApplicationController
 
     @messages = Message.search(params[:q]).records
     @messages = @messages.map do |message|
-      message.attributes.except('chat_id')
-      message.attributes.except('id')
+      message.attributes.except('chat_id', 'id')
     end
     render json: @messages
 

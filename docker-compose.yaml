@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   db:
-    platform: linux/x86_64
-    image: mysql:5.7
+    image: mysql:8.0-oracle
     volumes:
       - mysql-data:/var/lib/mysql
     environment:
@@ -24,8 +23,10 @@ services:
   sidekiq:
     build: ./
     command: bundle exec sidekiq
+    restart: always
     depends_on:
       - redis
+      - elasticsearch
       - db
     volumes:
       - .:/app
@@ -39,11 +40,12 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    restart: always
     environment:
       - discovery.type=single-node
     ports:
-      - "9205:9200"
-      - "9305:9300"
+      - "9200:9200"
+      - "9300:9300"
     volumes:
       - es-data:/usr/share/elasticsearch/data
 
@@ -51,6 +53,7 @@ services:
     build: ./ 
     entrypoint: docker-entrypoint.sh
     command: bundle exec rails s -b '0.0.0.0'
+    restart: always
     ports:
       - '3005:3000'
     environment:
@@ -59,7 +62,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
       - REDIS_URL=${REDIS_URL}
     volumes:
       - .:/app
@@ -69,6 +72,8 @@ services:
       - redis
       - sidekiq
       - elasticsearch
+    stdin_open: true
+    tty: true 
 
 volumes:
   mysql-data: {}

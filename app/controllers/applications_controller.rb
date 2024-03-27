@@ -1,6 +1,10 @@
 class ApplicationsController < ApplicationController
     def index
         @applications = Application.all
+        @applications = @applications.map do |message|
+            message.attributes.except('id')
+        end
+
         render json: @applications
     end
 
@@ -15,8 +19,7 @@ class ApplicationsController < ApplicationController
     end
 
     def update
-        @application = Application.find_by(token: params[:token])
-        Application::UpdateApplicationJob.perform_async(application_params[:name])
+        Application::UpdateApplicationJob.perform_async(application_params[:name], params[:token])
         render json: {message: 'Application updated successfully'}
     end
 

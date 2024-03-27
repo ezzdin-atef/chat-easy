@@ -1,4 +1,3 @@
-# app/workers/update_counts_worker.rb
 class UpdateCountsWorker
   include Sidekiq::Worker
 
@@ -21,3 +20,5 @@ class UpdateCountsWorker
     end
   end
 end
+
+Sidekiq::Cron::Job.create(cron: '0 * * * *', class: 'UpdateCountsWorker') # execute at every 5 minutes

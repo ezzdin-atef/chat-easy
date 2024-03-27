@@ -3,9 +3,7 @@ class ChatsController < ApplicationController
     @application = Application.find_by(token: chat_params[:token])
     return render json: { error: 'Application not found' } if @application.nil?
 
-    @chats = Chat.where(application_id: @application.id)
-
-    Chat::CreateChatJob.perform_async(@application.id, @chats.length + 1)
+    Chat::CreateChatJob.perform_async(@application.id)
     render json: { message: 'Chat created successfully' }
   end
 
@@ -16,8 +14,7 @@ class ChatsController < ApplicationController
     @chats = Chat.where(application_id: @application.id)
 
     @chats = @chats.map do |chat|
-      chat.attributes.except('application_id')
-      chat.attributes.except('id')
+      chat.attributes.except('application_id', 'id')
     end
     render json: @chats
   end
