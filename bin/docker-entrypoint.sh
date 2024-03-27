@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 # If running the rails server then create or migrate existing database
-./bin/rails db:create
-./bin/rails db:migrate
+bundle exec rake db:create
+bundle exec rake db:migrate
 
 exec "${@}"

@@ -11,7 +11,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3309:3306"
 
   redis:
     image: redis:alpine
@@ -41,8 +41,8 @@ services:
     environment:
       - discovery.type=single-node
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "9205:9200"
+      - "9305:9300"
     volumes:
       - es-data:/usr/share/elasticsearch/data
 
@@ -51,7 +51,7 @@ services:
     entrypoint: docker-entrypoint.sh
     command: bundle exec rails s -b '0.0.0.0'
     ports:
-      - '3000:3000'
+      - '3005:3000'
     environment:
       - RAILS_ENV=${RAILS_ENV}
       - MYSQL_HOST=${MYSQL_HOST}
