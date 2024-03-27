@@ -70,7 +70,7 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   config.elasticsearch = {
-    url: ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9201/'),
+    url: ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     transport_options: { request: { timeout: 5 } }
   }
 

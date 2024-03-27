@@ -4,4 +4,3 @@ begin
 rescue => e
   Rails.logger.error "Failed to connect to Redis: #{e.message}"
 end
-

@@ -11,45 +11,63 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "3301:3306"
+      - "3306:3306"
 
   redis:
     image: redis:alpine
     ports:
-      - "6371:6379"
+      - "6379:6379"
     volumes:
       - redis-data:/data
+  
+  sidekiq:
+    build: ./
+    command: bundle exec sidekiq
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - .:/app
+      - app-storage:/app/storage
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
     environment:
       - discovery.type=single-node
     ports:
-      - "9201:9200"
-      - "9301:9300"
+      - "9200:9200"
+      - "9300:9300"
     volumes:
       - es-data:/usr/share/elasticsearch/data
 
   web:
-    build: .
-    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails server -b 0.0.0.0"
+    build: ./ 
+    entrypoint: docker-entrypoint.sh
+    command: bundle exec rails s -b '0.0.0.0'
+    ports:
+      - '3000:3000'
     environment:
-      - RAILS_ENV=development
-      - MYSQL_HOST=db
+      - RAILS_ENV=${RAILS_ENV}
+      - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-      - REDIS_URL=redis://redis:6379/0
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+      - REDIS_URL=${REDIS_URL}
     volumes:
       - .:/app
       - app-storage:/app/storage
     depends_on:
       - db
       - redis
+      - sidekiq
       - elasticsearch
-    ports:
-      - "3001:3000"
 
 volumes:
   mysql-data: {}

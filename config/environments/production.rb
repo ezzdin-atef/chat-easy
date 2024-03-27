@@ -90,9 +90,9 @@ Rails.application.configure do
 
 
   config.elasticsearch = {
-  url: ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200/'),
-  transport_options: { request: { timeout: 5 } }
-}
+    url: ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200/'),
+    transport_options: { request: { timeout: 5 } }
+  }
 
-config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] || 'redis://localhost:6379/1' }
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] || 'redis://localhost:6379/1' }
 end
