@@ -131,11 +131,6 @@ docker compose up --build
 
 [GET] /applications/:token/:chat_number/messages/search?q=:query
 
-## Minimum System Requirements
-
-- CPU: 6 Core
-- RAM: 16 GB
-- Storage: 5 GB
 
 ## License
 
