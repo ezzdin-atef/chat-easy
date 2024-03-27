@@ -8,12 +8,8 @@ class MessagesController < ApplicationController
 
     @messages = Message.where(chat_id: @chat.id)
 
-    @message = Message.new(chat_id: @chat.id, content: params[:content], message_number: @messages.length + 1)
-    if @message.save
-      render json: { message: 'Message created successfully' }
-    else
-      render json: { error: 'Error creating message' }
-    end
+    Message::CreateMessageJob(@chat.id, params[:content], @messages.length + 1)
+    render json: { message: 'Message created successfully' }
   end
 
   def getChatMessages

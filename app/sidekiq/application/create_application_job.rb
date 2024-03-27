@@ -1,4 +1,4 @@
-class CreateApplicationJob
+class Application::CreateApplicationJob
   include Sidekiq::Job
 
   def perform(name, token)

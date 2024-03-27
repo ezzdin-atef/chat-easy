@@ -5,12 +5,8 @@ class ChatsController < ApplicationController
 
     @chats = Chat.where(application_id: @application.id)
 
-    @chat = Chat.new(application_id: @application.id, chat_number: @chats.length + 1)
-    if @chat.save
-      render json: { message: 'Chat created successfully' }
-    else
-      render json: { error: 'Error creating chat' }
-    end
+    Chat::CreateChatJob.perform_async(@application.id, @chats.length + 1)
+    render json: { message: 'Chat created successfully' }
   end
 
   def getApplicationChats
