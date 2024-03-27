@@ -1,0 +1,23 @@
+# app/workers/update_counts_worker.rb
+class UpdateCountsWorker
+  include Sidekiq::Worker
+
+  def perform
+    update_applications_counts
+    update_chats_counts
+  end
+
+  private
+
+  def update_applications_counts
+    Application.all.each do |application|
+      application.update(chats_count: application.chats.count)
+    end
+  end
+
+  def update_chats_counts
+    Chat.all.each do |chat|
+      chat.update(messages_count: chat.messages.count)
+    end
+  end
+end

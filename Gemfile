@@ -18,6 +18,7 @@ gem "puma", ">= 5.0"
 # gem "redis", ">= 4.0.1"
 gem 'redis'
 gem 'sidekiq'
+gem 'sidekiq-cron'
 
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'

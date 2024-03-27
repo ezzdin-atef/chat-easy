@@ -14,6 +14,11 @@ class ChatsController < ApplicationController
     return render json: { error: 'Application not found' } if @application.nil?
 
     @chats = Chat.where(application_id: @application.id)
+
+    @chats = @chats.map do |chat|
+      chat.attributes.except('application_id')
+      chat.attributes.except('id')
+    end
     render json: @chats
   end
 

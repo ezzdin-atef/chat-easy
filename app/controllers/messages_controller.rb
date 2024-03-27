@@ -20,6 +20,10 @@ class MessagesController < ApplicationController
     return render json: { error: 'Chat not found' } if @chat.nil?
 
     @messages = Message.where(chat_id: @chat.id)
+    @messages = @messages.map do |message|
+      message.attributes.except('chat_id')
+      message.attributes.except('id')
+    end
     render json: @messages
   end
 
@@ -31,6 +35,10 @@ class MessagesController < ApplicationController
     return render json: { error: 'Chat not found' } if @chat.nil?
 
     @messages = Message.search(params[:q]).records
+    @messages = @messages.map do |message|
+      message.attributes.except('chat_id')
+      message.attributes.except('id')
+    end
     render json: @messages
 
   end
